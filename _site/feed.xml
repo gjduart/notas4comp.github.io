@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.7">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2026-03-10T10:31:13-03:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">Notas de Computação</title><subtitle>Oi pessoal, me chamo Gabriele Duarte, e criei esse blog para compartilhar aprendizados em teoria de Machine Learning, matemática aplicada e outras áreas da computação.</subtitle><author><name>Gabriel Duate</name><email>g.jonas.duarte@gmail.com</email></author><entry><title type="html">Inferência Bayesiana: Do Teorema de Bayes ao Posterior</title><link href="http://localhost:4000/probabilidade/2024/02/20/inferencia-bayesiana/" rel="alternate" type="text/html" title="Inferência Bayesiana: Do Teorema de Bayes ao Posterior" /><published>2024-02-20T10:00:00-03:00</published><updated>2024-02-20T10:00:00-03:00</updated><id>http://localhost:4000/probabilidade/2024/02/20/inferencia-bayesiana</id><content type="html" xml:base="http://localhost:4000/probabilidade/2024/02/20/inferencia-bayesiana/">&lt;p&gt;A &lt;strong&gt;inferência bayesiana&lt;/strong&gt; é uma abordagem à estatística que trata probabilidade como
+&lt;strong&gt;grau de crença&lt;/strong&gt;, atualizando crenças à medida que novos dados chegam.&lt;/p&gt;
+
+&lt;h2 id=&quot;o-teorema-de-bayes&quot;&gt;O Teorema de Bayes&lt;/h2&gt;
+
+&lt;p&gt;O resultado central é simples e elegante:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(\theta \mid \mathcal{D}) = \frac{P(\mathcal{D} \mid \theta) \, P(\theta)}{P(\mathcal{D})}&lt;/script&gt;
+
+&lt;p&gt;onde:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;$P(\theta)$ — &lt;strong&gt;prior&lt;/strong&gt;: crença sobre $\theta$ antes dos dados&lt;/li&gt;
+  &lt;li&gt;$P(\mathcal{D} \mid \theta)$ — &lt;strong&gt;verossimilhança&lt;/strong&gt;: probabilidade dos dados dado $\theta$&lt;/li&gt;
+  &lt;li&gt;$P(\mathcal{D})$ — &lt;strong&gt;evidência&lt;/strong&gt;: constante normalizadora&lt;/li&gt;
+  &lt;li&gt;$P(\theta \mid \mathcal{D})$ — &lt;strong&gt;posterior&lt;/strong&gt;: crença atualizada após os dados&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;A intuição: começamos com uma crença ($prior$), observamos dados, e atualizamos nossa crença ($posterior$).&lt;/p&gt;
+
+&lt;h2 id=&quot;exemplo-estimativa-de-proporção&quot;&gt;Exemplo: Estimativa de Proporção&lt;/h2&gt;
+
+&lt;p&gt;Queremos estimar a probabilidade $\theta$ de cara em uma moeda.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Prior:&lt;/strong&gt; Assumimos $\theta \sim \text{Beta}(\alpha, \beta)$ (prior conjugado).&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(\theta) = \frac{\theta^{\alpha-1}(1-\theta)^{\beta-1}}{B(\alpha,\beta)}&lt;/script&gt;
+
+&lt;p&gt;&lt;strong&gt;Verossimilhança:&lt;/strong&gt; Observamos $H$ caras e $T$ coroas:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(\mathcal{D} \mid \theta) = \theta^H (1-\theta)^T&lt;/script&gt;
+
+&lt;p&gt;&lt;strong&gt;Posterior:&lt;/strong&gt; O prior Beta é conjugado à verossimilhança Binomial:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(\theta \mid \mathcal{D}) \propto \theta^{H+\alpha-1}(1-\theta)^{T+\beta-1}&lt;/script&gt;
+
+&lt;p&gt;Portanto: $\theta \mid \mathcal{D} \sim \text{Beta}(\alpha + H, \beta + T)$&lt;/p&gt;
+
+&lt;p&gt;A média posterior é:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbb{E}[\theta \mid \mathcal{D}] = \frac{\alpha + H}{\alpha + \beta + H + T}&lt;/script&gt;
+
+&lt;h2 id=&quot;maximum-a-posteriori-map&quot;&gt;Maximum A Posteriori (MAP)&lt;/h2&gt;
+
+&lt;p&gt;Em vez da distribuição completa, podemos buscar a moda do posterior:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta^{MAP} = \arg\max_\theta \log P(\theta \mid \mathcal{D}) = \arg\max_\theta \left[\log P(\mathcal{D} \mid \theta) + \log P(\theta)\right]&lt;/script&gt;
+
+&lt;p&gt;&lt;strong&gt;Insight:&lt;/strong&gt; MAP é equivalente a máxima verossimilhança com &lt;strong&gt;regularização&lt;/strong&gt;!
+O $\log P(\theta)$ age como termo regularizador:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Prior Gaussiano $\Rightarrow$ regularização $L_2$ (Ridge)&lt;/li&gt;
+  &lt;li&gt;Prior Laplaciano $\Rightarrow$ regularização $L_1$ (Lasso)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;posterior-preditivo&quot;&gt;Posterior Preditivo&lt;/h2&gt;
+
+&lt;p&gt;Para fazer previsões, marginalizamos sobre o posterior:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;P(x_{new} \mid \mathcal{D}) = \int P(x_{new} \mid \theta) P(\theta \mid \mathcal{D}) \, d\theta&lt;/script&gt;
+
+&lt;p&gt;Isso &lt;strong&gt;incorpora incerteza sobre os parâmetros&lt;/strong&gt; na previsão — uma vantagem fundamental sobre métodos pontuais.&lt;/p&gt;
+
+&lt;h2 id=&quot;comparação-bayesiano-vs-frequentista&quot;&gt;Comparação: Bayesiano vs. Frequentista&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Aspecto&lt;/th&gt;
+      &lt;th&gt;Bayesiano&lt;/th&gt;
+      &lt;th&gt;Frequentista&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Probabilidade&lt;/td&gt;
+      &lt;td&gt;Grau de crença&lt;/td&gt;
+      &lt;td&gt;Frequência limite&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Parâmetros&lt;/td&gt;
+      &lt;td&gt;Variáveis aleatórias&lt;/td&gt;
+      &lt;td&gt;Quantidades fixas&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Inferência&lt;/td&gt;
+      &lt;td&gt;Distribuição posterior&lt;/td&gt;
+      &lt;td&gt;Estimativas pontuais&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Incerteza&lt;/td&gt;
+      &lt;td&gt;Via posterior&lt;/td&gt;
+      &lt;td&gt;Via intervalos de confiança&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Dados necessários&lt;/td&gt;
+      &lt;td&gt;Funciona com poucos&lt;/td&gt;
+      &lt;td&gt;Precisa de muitos&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;implementação-com-pymc&quot;&gt;Implementação com PyMC&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;pymc&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pm&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Dados: 7 caras em 10 lançamentos
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;H&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;N&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;modelo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# Prior
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;theta&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Beta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'theta'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alpha&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;beta&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Verossimilhança
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;obs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Binomial&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'obs'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;N&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;theta&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;observed&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;H&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;c1&quot;&gt;# Amostragem MCMC
+&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sample&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;return_inferencedata&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;pm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;plot_posterior&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;trace&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;var_names&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'theta'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;conclusão&quot;&gt;Conclusão&lt;/h2&gt;
+
+&lt;p&gt;A inferência bayesiana oferece uma estrutura coerente para aprendizado:
+começamos com conhecimento prévio, observamos dados, e atualizamos sistematicamente.
+A chave está em escolher priors que reflitam conhecimento genuíno — nem muito informativos,
+nem completamente vagos.&lt;/p&gt;
+
+&lt;p&gt;No próximo post, veremos &lt;strong&gt;Processos Gaussianos&lt;/strong&gt;: a extensão bayesiana para funções.&lt;/p&gt;</content><author><name>Gabriel Duarte</name></author><category term="bayes" /><category term="probabilidade" /><category term="inferência" /><category term="prior" /><category term="posterior" /><summary type="html">A inferência bayesiana é uma abordagem à estatística que trata probabilidade como grau de crença, atualizando crenças à medida que novos dados chegam.</summary></entry><entry><title type="html">Decomposição em Valores Singulares (SVD): A Fatoração Universal</title><link href="http://localhost:4000/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/" rel="alternate" type="text/html" title="Decomposição em Valores Singulares (SVD): A Fatoração Universal" /><published>2024-02-01T10:00:00-03:00</published><updated>2024-02-01T10:00:00-03:00</updated><id>http://localhost:4000/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares</id><content type="html" xml:base="http://localhost:4000/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/">&lt;p&gt;A &lt;strong&gt;Decomposição em Valores Singulares&lt;/strong&gt; (SVD) é talvez a fatoração matricial mais poderosa
+e ubíqua em toda a matemática aplicada e Machine Learning.&lt;/p&gt;
+
+&lt;h2 id=&quot;definição&quot;&gt;Definição&lt;/h2&gt;
+
+&lt;p&gt;Toda matriz $A \in \mathbb{R}^{m \times n}$ pode ser escrita como:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;A = U \Sigma V^\top&lt;/script&gt;
+
+&lt;p&gt;onde:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;$U \in \mathbb{R}^{m \times m}$ — matriz ortogonal (vetores singulares esquerdos)&lt;/li&gt;
+  &lt;li&gt;$\Sigma \in \mathbb{R}^{m \times n}$ — matriz diagonal com $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_r \geq 0$&lt;/li&gt;
+  &lt;li&gt;$V \in \mathbb{R}^{n \times n}$ — matriz ortogonal (vetores singulares direitos)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Os $\sigma_i$ são chamados de &lt;strong&gt;valores singulares&lt;/strong&gt; de $A$.&lt;/p&gt;
+
+&lt;h2 id=&quot;intuição-geométrica&quot;&gt;Intuição Geométrica&lt;/h2&gt;
+
+&lt;p&gt;A SVD decompõe qualquer transformação linear em três operações simples:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;$V^\top$&lt;/strong&gt;: rotação/reflexão no espaço de entrada&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;$\Sigma$&lt;/strong&gt;: escalonamento ao longo de eixos coordenados&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;$U$&lt;/strong&gt;: rotação/reflexão no espaço de saída&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Geometricamente, $A$ transforma a &lt;strong&gt;hiperesfera unitária&lt;/strong&gt; em um &lt;strong&gt;hiperelipsoide&lt;/strong&gt;,
+cujos semi-eixos têm comprimentos $\sigma_1, \sigma_2, \ldots, \sigma_r$.&lt;/p&gt;
+
+&lt;h2 id=&quot;existência-e-unicidade&quot;&gt;Existência e Unicidade&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Teorema:&lt;/strong&gt; Toda matriz real $A \in \mathbb{R}^{m \times n}$ possui uma SVD.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Prova:&lt;/strong&gt; Considere $A^\top A \in \mathbb{R}^{n \times n}$, que é simétrica positiva semidefinida.
+Pelo teorema espectral, existe uma diagonalização ortogonal:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;A^\top A = V \Lambda V^\top&lt;/script&gt;
+
+&lt;p&gt;onde $\Lambda = \text{diag}(\lambda_1, \ldots, \lambda_n)$ com $\lambda_i \geq 0$.&lt;/p&gt;
+
+&lt;p&gt;Defina $\sigma_i = \sqrt{\lambda_i}$ e $\Sigma$ como a matriz de valores singulares.
+Para $\sigma_i &amp;gt; 0$, defina $u_i = \frac{1}{\sigma_i} A v_i$.&lt;/p&gt;
+
+&lt;p&gt;Pode-se verificar que ${u_i}$ são ortonormais e que $A = U\Sigma V^\top$. $\square$&lt;/p&gt;
+
+&lt;h2 id=&quot;melhor-aproximação-de-posto-k&quot;&gt;Melhor Aproximação de Posto $k$&lt;/h2&gt;
+
+&lt;p&gt;Um dos resultados mais importantes é o &lt;strong&gt;Teorema de Eckart-Young&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\min_{\text{rank}(B) \leq k} \|A - B\|_F = \|A - A_k\|_F = \sqrt{\sum_{i=k+1}^{r} \sigma_i^2}&lt;/script&gt;
+
+&lt;p&gt;onde $A_k = \sum_{i=1}^{k} \sigma_i u_i v_i^\top$ é a &lt;strong&gt;truncated SVD&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Isso significa que $A_k$ é a &lt;strong&gt;melhor aproximação de posto $k$&lt;/strong&gt; de $A$ na norma de Frobenius!&lt;/p&gt;
+
+&lt;h2 id=&quot;relação-com-pca&quot;&gt;Relação com PCA&lt;/h2&gt;
+
+&lt;p&gt;O PCA (Análise de Componentes Principais) é essencialmente uma SVD.&lt;/p&gt;
+
+&lt;p&gt;Dada uma matriz de dados centrada $X \in \mathbb{R}^{n \times d}$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;X = U\Sigma V^\top&lt;/script&gt;
+
+&lt;p&gt;As &lt;strong&gt;componentes principais&lt;/strong&gt; são as colunas de $V$ (autovetores de $X^\top X$).
+A variância explicada pela $k$-ésima componente é $\sigma_k^2 / \sum_i \sigma_i^2$.&lt;/p&gt;
+
+&lt;h2 id=&quot;aplicações-em-ml&quot;&gt;Aplicações em ML&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Aplicação&lt;/th&gt;
+      &lt;th&gt;Como usa SVD&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;PCA&lt;/td&gt;
+      &lt;td&gt;Truncated SVD da matriz de dados&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Sistemas de recomendação&lt;/td&gt;
+      &lt;td&gt;Fatoração matricial baixo posto&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Compressão de imagens&lt;/td&gt;
+      &lt;td&gt;Aproximação de posto $k$&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Solução de sistemas&lt;/td&gt;
+      &lt;td&gt;Pseudo-inversa via SVD&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Análise semântica&lt;/td&gt;
+      &lt;td&gt;LSA (Latent Semantic Analysis)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;pseudo-inversa-de-moore-penrose&quot;&gt;Pseudo-Inversa de Moore-Penrose&lt;/h2&gt;
+
+&lt;p&gt;Para $A = U\Sigma V^\top$, a pseudo-inversa é:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;A^+ = V \Sigma^+ U^\top&lt;/script&gt;
+
+&lt;p&gt;onde $\Sigma^+$ é a transposta de $\Sigma$ com cada $\sigma_i &amp;gt; 0$ substituído por $1/\sigma_i$.&lt;/p&gt;
+
+&lt;p&gt;A solução de mínimos quadrados $\min_x |Ax - b|_2$ é dada por $x^* = A^+ b$.&lt;/p&gt;
+
+&lt;h2 id=&quot;implementação&quot;&gt;Implementação&lt;/h2&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;numpy&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;as&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# SVD completa
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;random&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;randn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;svd&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;full_matrices&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Reconstrução
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sigma&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;zeros_like&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dtype&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;Sigma&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;diag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;A_reconstructed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;U&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Sigma&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# Aproximação de posto k=2
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;A_k&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;U&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;@&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[:&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:]&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Erro de aproximação: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;np&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;linalg&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;norm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A_k&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;'fro'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;4&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;conclusão&quot;&gt;Conclusão&lt;/h2&gt;
+
+&lt;p&gt;A SVD é verdadeiramente universal: ela existe para qualquer matriz, revela a geometria
+da transformação linear, e fornece a melhor aproximação de posto baixo.
+Compreender a SVD profundamente é essencial para entender PCA, redes neurais de baixo posto,
+e muito mais.&lt;/p&gt;</content><author><name>Gabriel Duarte</name></author><category term="svd" /><category term="álgebra-linear" /><category term="pca" /><category term="decomposição" /><summary type="html">A Decomposição em Valores Singulares (SVD) é talvez a fatoração matricial mais poderosa e ubíqua em toda a matemática aplicada e Machine Learning.</summary></entry><entry><title type="html">Gradiente Descendente: Teoria e Intuição Matemática</title><link href="http://localhost:4000/otimizacao/2024/01/15/gradiente-descendente/" rel="alternate" type="text/html" title="Gradiente Descendente: Teoria e Intuição Matemática" /><published>2024-01-15T10:00:00-03:00</published><updated>2024-01-15T10:00:00-03:00</updated><id>http://localhost:4000/otimizacao/2024/01/15/gradiente-descendente</id><content type="html" xml:base="http://localhost:4000/otimizacao/2024/01/15/gradiente-descendente/">&lt;p&gt;O &lt;strong&gt;gradiente descendente&lt;/strong&gt; é o algoritmo de otimização mais fundamental em Machine Learning.
+Neste post, vamos derivar o método do zero e entender sua geometria.&lt;/p&gt;
+
+&lt;h2 id=&quot;o-problema-de-otimização&quot;&gt;O Problema de Otimização&lt;/h2&gt;
+
+&lt;p&gt;Dado uma função de perda $\mathcal{L}: \mathbb{R}^n \to \mathbb{R}$, queremos encontrar:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta^* = \arg\min_{\theta \in \mathbb{R}^n} \mathcal{L}(\theta)&lt;/script&gt;
+
+&lt;p&gt;Para funções diferenciáveis, o gradiente $\nabla_\theta \mathcal{L}$ nos diz a &lt;strong&gt;direção de maior crescimento&lt;/strong&gt;.
+Portanto, a direção de maior decrescimento é $-\nabla_\theta \mathcal{L}$.&lt;/p&gt;
+
+&lt;h2 id=&quot;intuição-geométrica&quot;&gt;Intuição Geométrica&lt;/h2&gt;
+
+&lt;p&gt;Imagine uma superfície montanhosa. Você está num ponto qualquer e quer chegar ao vale.
+A estratégia do gradiente descendente é simples: &lt;strong&gt;sempre siga a direção mais íngreme para baixo&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;Matematicamente, a atualização é:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta_{t+1} = \theta_t - \eta \cdot \nabla_\theta \mathcal{L}(\theta_t)&lt;/script&gt;
+
+&lt;p&gt;onde $\eta &amp;gt; 0$ é a &lt;strong&gt;taxa de aprendizado&lt;/strong&gt; (learning rate).&lt;/p&gt;
+
+&lt;h2 id=&quot;derivação-via-expansão-de-taylor&quot;&gt;Derivação via Expansão de Taylor&lt;/h2&gt;
+
+&lt;p&gt;Por que a direção $-\nabla \mathcal{L}$ é a melhor? Usemos a expansão de Taylor de primeira ordem:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathcal{L}(\theta + \delta) \approx \mathcal{L}(\theta) + \nabla_\theta \mathcal{L}(\theta)^\top \delta + O(\|\delta\|^2)&lt;/script&gt;
+
+&lt;p&gt;Queremos escolher $\delta$ com $|\delta| = \epsilon$ (passo fixo) que &lt;strong&gt;minimize&lt;/strong&gt; o lado direito.
+Isso equivale a minimizar $\nabla \mathcal{L}^\top \delta$ sujeito a $|\delta| = \epsilon$.&lt;/p&gt;
+
+&lt;p&gt;Pela desigualdade de Cauchy-Schwarz:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\nabla \mathcal{L}^\top \delta \geq -\|\nabla \mathcal{L}\| \cdot \|\delta\|&lt;/script&gt;
+
+&lt;p&gt;com igualdade quando $\delta = -\epsilon \frac{\nabla \mathcal{L}}{|\nabla \mathcal{L}|}$.&lt;/p&gt;
+
+&lt;p&gt;Portanto, a &lt;strong&gt;direção ótima&lt;/strong&gt; de descida (para passos pequenos) é de fato $-\nabla \mathcal{L}$.&lt;/p&gt;
+
+&lt;h2 id=&quot;convergência-para-funções-convexas&quot;&gt;Convergência para Funções Convexas&lt;/h2&gt;
+
+&lt;h3 id=&quot;condição-de-lipschitz-no-gradiente&quot;&gt;Condição de Lipschitz no Gradiente&lt;/h3&gt;
+
+&lt;p&gt;Assumimos que $\nabla \mathcal{L}$ é $L$-Lipschitz contínuo:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\|\nabla \mathcal{L}(\theta) - \nabla \mathcal{L}(\phi)\| \leq L \|\theta - \phi\| \quad \forall \theta, \phi&lt;/script&gt;
+
+&lt;p&gt;Isso garante que a função não “muda rápido demais”.&lt;/p&gt;
+
+&lt;h3 id=&quot;teorema-de-convergência&quot;&gt;Teorema de Convergência&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Teorema:&lt;/strong&gt; Se $\mathcal{L}$ é convexo com gradiente $L$-Lipschitz e $\theta^*$ é o mínimo global, então com $\eta = 1/L$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathcal{L}(\theta_T) - \mathcal{L}(\theta^*) \leq \frac{L \|\theta_0 - \theta^*\|^2}{2T}&lt;/script&gt;
+
+&lt;p&gt;&lt;strong&gt;Prova (esboço):&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Da condição de Lipschitz, temos o &lt;em&gt;descent lemma&lt;/em&gt;:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathcal{L}(\theta_{t+1}) \leq \mathcal{L}(\theta_t) - \eta\left(1 - \frac{\eta L}{2}\right)\|\nabla \mathcal{L}(\theta_t)\|^2&lt;/script&gt;
+
+&lt;p&gt;Com $\eta = 1/L$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathcal{L}(\theta_{t+1}) \leq \mathcal{L}(\theta_t) - \frac{1}{2L}\|\nabla \mathcal{L}(\theta_t)\|^2&lt;/script&gt;
+
+&lt;p&gt;Combinando com a convexidade ($\mathcal{L}(\theta^&lt;em&gt;) \geq \mathcal{L}(\theta_t) + \nabla \mathcal{L}(\theta_t)^\top(\theta^&lt;/em&gt; - \theta_t)$), obtemos a taxa $O(1/T)$. $\square$&lt;/p&gt;
+
+&lt;h2 id=&quot;escolha-da-taxa-de-aprendizado&quot;&gt;Escolha da Taxa de Aprendizado&lt;/h2&gt;
+
+&lt;p&gt;A escolha de $\eta$ é crítica:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Situação&lt;/th&gt;
+      &lt;th&gt;Efeito&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$\eta$ muito grande&lt;/td&gt;
+      &lt;td&gt;Divergência / oscilação&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$\eta$ muito pequeno&lt;/td&gt;
+      &lt;td&gt;Convergência lenta&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;$\eta = 1/L$&lt;/td&gt;
+      &lt;td&gt;Convergência garantida&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;variantes-importantes&quot;&gt;Variantes Importantes&lt;/h2&gt;
+
+&lt;h3 id=&quot;mini-batch-sgd&quot;&gt;Mini-Batch SGD&lt;/h3&gt;
+
+&lt;p&gt;Em vez de usar todos os dados, usamos um mini-batch $\mathcal{B} \subset [n]$:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\theta_{t+1} = \theta_t - \eta \cdot \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \nabla \ell_i(\theta_t)&lt;/script&gt;
+
+&lt;p&gt;O gradiente estocástico é um estimador não-viesado: $\mathbb{E}[\nabla \ell_{\mathcal{B}}] = \nabla \mathcal{L}$.&lt;/p&gt;
+
+&lt;h3 id=&quot;momento-momentum&quot;&gt;Momento (Momentum)&lt;/h3&gt;
+
+&lt;p&gt;Acumula gradientes passados para suavizar a trajetória:&lt;/p&gt;
+
+&lt;p&gt;&lt;script type=&quot;math/tex&quot;&gt;v_{t+1} = \beta v_t + \nabla \mathcal{L}(\theta_t)&lt;/script&gt;
+&lt;script type=&quot;math/tex&quot;&gt;\theta_{t+1} = \theta_t - \eta v_{t+1}&lt;/script&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusão&quot;&gt;Conclusão&lt;/h2&gt;
+
+&lt;p&gt;O gradiente descendente é elegante em sua simplicidade: apenas siga a derivada.
+Nos próximos posts, veremos métodos de segunda ordem (Newton, BFGS) que usam a Hessiana
+$\nabla^2 \mathcal{L}$ para convergência mais rápida, porém com maior custo computacional.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Próximo post:&lt;/strong&gt; &lt;a href=&quot;#&quot;&gt;Método de Newton e Quasi-Newton&lt;/a&gt;&lt;/p&gt;</content><author><name>Gabriel Duarte</name></author><category term="gradiente" /><category term="otimização" /><category term="cálculo" /><category term="machine-learning" /><summary type="html">O gradiente descendente é o algoritmo de otimização mais fundamental em Machine Learning. Neste post, vamos derivar o método do zero e entender sua geometria.</summary></entry></feed>

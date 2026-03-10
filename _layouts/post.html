@@ -1,0 +1,86 @@
+---
+layout: default
+---
+
+<div class="container post-container">
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <header class="post-header">
+      <div class="post-breadcrumb">
+        <a href="/">Início</a>
+        <span>/</span>
+        <a href="/blog/">Blog</a>
+        {% if page.categories.size > 0 %}
+        <span>/</span>
+        <a href="/blog/category/{{ page.categories[0] }}/">{{ page.categories[0] | replace: '-', ' ' | capitalize }}</a>
+        {% endif %}
+      </div>
+
+      <h1 class="post-title" itemprop="headline">{{ page.title }}</h1>
+
+      <div class="post-meta">
+        <time class="post-date" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
+          {{ page.date | date: "%d de %B de %Y" }}
+        </time>
+        {% if page.author %}
+        <span class="post-author">por {{ page.author }}</span>
+        {% endif %}
+        {% if page.reading_time %}
+        <span class="post-reading">· {{ page.reading_time }} min de leitura</span>
+        {% endif %}
+      </div>
+
+      {% if page.tags.size > 0 %}
+      <div class="post-tags-header">
+        {% for tag in page.tags %}
+        <span class="post-tag">#{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% if page.description %}
+      <p class="post-description">{{ page.description }}</p>
+      {% endif %}
+    </header>
+
+    <div class="post-content" itemprop="articleBody">
+      {{ content }}
+    </div>
+
+    <footer class="post-footer">
+      <div class="post-share">
+        <span>Compartilhar:</span>
+        <a href="https://twitter.com/intent/tweet?text={{ page.title | url_encode }}&url={{ page.url | absolute_url | url_encode }}" target="_blank" rel="noopener">Twitter</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url | url_encode }}" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+
+      <nav class="post-nav">
+        {% if page.previous.url %}
+        <a href="{{ page.previous.url | relative_url }}" class="post-nav-item post-nav-prev">
+          <span class="nav-label">← Anterior</span>
+          <span class="nav-title">{{ page.previous.title }}</span>
+        </a>
+        {% endif %}
+        {% if page.next.url %}
+        <a href="{{ page.next.url | relative_url }}" class="post-nav-item post-nav-next">
+          <span class="nav-label">Próximo →</span>
+          <span class="nav-title">{{ page.next.title }}</span>
+        </a>
+        {% endif %}
+      </nav>
+    </footer>
+
+  </article>
+
+  <!-- Sidebar / ToC -->
+  <aside class="post-sidebar">
+    <div class="toc-container sticky">
+      <h4 class="toc-title">Índice</h4>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+
+</div>
+
+<script src="{{ '/assets/js/toc.js' | relative_url }}"></script>

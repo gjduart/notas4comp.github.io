@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradiente Descendente: Teoria e Intuição Matemática · Notas de Computação</title>
+  <meta name="description" content="Uma exploração completa do gradiente descendente, desde a intuição geométrica até a convergência formal.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- MathJax para fórmulas matemáticas -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        packages: {'[+]': ['ams', 'boldsymbol']},
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Gradiente Descendente: Teoria e Intuição Matemática | Notas de Computação</title>
+<meta name="generator" content="Jekyll v3.8.7" />
+<meta property="og:title" content="Gradiente Descendente: Teoria e Intuição Matemática" />
+<meta name="author" content="Gabriel Duarte" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Uma exploração completa do gradiente descendente, desde a intuição geométrica até a convergência formal." />
+<meta property="og:description" content="Uma exploração completa do gradiente descendente, desde a intuição geométrica até a convergência formal." />
+<link rel="canonical" href="http://localhost:4000/otimizacao/2024/01/15/gradiente-descendente/" />
+<meta property="og:url" content="http://localhost:4000/otimizacao/2024/01/15/gradiente-descendente/" />
+<meta property="og:site_name" content="Notas de Computação" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-01-15T10:00:00-03:00" />
+<script type="application/ld+json">
+{"description":"Uma exploração completa do gradiente descendente, desde a intuição geométrica até a convergência formal.","author":{"@type":"Person","name":"Gabriel Duarte"},"@type":"BlogPosting","url":"http://localhost:4000/otimizacao/2024/01/15/gradiente-descendente/","headline":"Gradiente Descendente: Teoria e Intuição Matemática","dateModified":"2024-01-15T10:00:00-03:00","datePublished":"2024-01-15T10:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/otimizacao/2024/01/15/gradiente-descendente/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Notas de Computação" />
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      <span class="logo-symbol">∇</span>
+      <span class="logo-text">Notas de Computação</span>
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      <a href="/" class="nav-link ">
+        Início
+      </a>
+      <a href="/blog/" class="nav-link ">
+        Blog
+      </a>
+      <a href="/about/" class="nav-link ">
+        Sobre
+      </a>
+    </nav>
+
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+
+  <main class="site-main">
+    <div class="container post-container">
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <header class="post-header">
+      <div class="post-breadcrumb">
+        <a href="/">Início</a>
+        <span>/</span>
+        <a href="/blog/">Blog</a>
+        
+        <span>/</span>
+        <a href="/blog/category/otimizacao/">Otimizacao</a>
+        
+      </div>
+
+      <h1 class="post-title" itemprop="headline">Gradiente Descendente: Teoria e Intuição Matemática</h1>
+
+      <div class="post-meta">
+        <time class="post-date" datetime="2024-01-15T10:00:00-03:00" itemprop="datePublished">
+          15 de January de 2024
+        </time>
+        
+        <span class="post-author">por Gabriel Duarte</span>
+        
+        
+        <span class="post-reading">· 12 min de leitura</span>
+        
+      </div>
+
+      
+      <div class="post-tags-header">
+        
+        <span class="post-tag">#gradiente</span>
+        
+        <span class="post-tag">#otimização</span>
+        
+        <span class="post-tag">#cálculo</span>
+        
+        <span class="post-tag">#machine-learning</span>
+        
+      </div>
+      
+
+      
+      <p class="post-description">Uma exploração completa do gradiente descendente, desde a intuição geométrica até a convergência formal.</p>
+      
+    </header>
+
+    <div class="post-content" itemprop="articleBody">
+      <p>O <strong>gradiente descendente</strong> é o algoritmo de otimização mais fundamental em Machine Learning.
+Neste post, vamos derivar o método do zero e entender sua geometria.</p>
+
+<h2 id="o-problema-de-otimização">O Problema de Otimização</h2>
+
+<p>Dado uma função de perda $\mathcal{L}: \mathbb{R}^n \to \mathbb{R}$, queremos encontrar:</p>
+
+<script type="math/tex; mode=display">\theta^* = \arg\min_{\theta \in \mathbb{R}^n} \mathcal{L}(\theta)</script>
+
+<p>Para funções diferenciáveis, o gradiente $\nabla_\theta \mathcal{L}$ nos diz a <strong>direção de maior crescimento</strong>.
+Portanto, a direção de maior decrescimento é $-\nabla_\theta \mathcal{L}$.</p>
+
+<h2 id="intuição-geométrica">Intuição Geométrica</h2>
+
+<p>Imagine uma superfície montanhosa. Você está num ponto qualquer e quer chegar ao vale.
+A estratégia do gradiente descendente é simples: <strong>sempre siga a direção mais íngreme para baixo</strong>.</p>
+
+<p>Matematicamente, a atualização é:</p>
+
+<script type="math/tex; mode=display">\theta_{t+1} = \theta_t - \eta \cdot \nabla_\theta \mathcal{L}(\theta_t)</script>
+
+<p>onde $\eta &gt; 0$ é a <strong>taxa de aprendizado</strong> (learning rate).</p>
+
+<h2 id="derivação-via-expansão-de-taylor">Derivação via Expansão de Taylor</h2>
+
+<p>Por que a direção $-\nabla \mathcal{L}$ é a melhor? Usemos a expansão de Taylor de primeira ordem:</p>
+
+<script type="math/tex; mode=display">\mathcal{L}(\theta + \delta) \approx \mathcal{L}(\theta) + \nabla_\theta \mathcal{L}(\theta)^\top \delta + O(\|\delta\|^2)</script>
+
+<p>Queremos escolher $\delta$ com $|\delta| = \epsilon$ (passo fixo) que <strong>minimize</strong> o lado direito.
+Isso equivale a minimizar $\nabla \mathcal{L}^\top \delta$ sujeito a $|\delta| = \epsilon$.</p>
+
+<p>Pela desigualdade de Cauchy-Schwarz:</p>
+
+<script type="math/tex; mode=display">\nabla \mathcal{L}^\top \delta \geq -\|\nabla \mathcal{L}\| \cdot \|\delta\|</script>
+
+<p>com igualdade quando $\delta = -\epsilon \frac{\nabla \mathcal{L}}{|\nabla \mathcal{L}|}$.</p>
+
+<p>Portanto, a <strong>direção ótima</strong> de descida (para passos pequenos) é de fato $-\nabla \mathcal{L}$.</p>
+
+<h2 id="convergência-para-funções-convexas">Convergência para Funções Convexas</h2>
+
+<h3 id="condição-de-lipschitz-no-gradiente">Condição de Lipschitz no Gradiente</h3>
+
+<p>Assumimos que $\nabla \mathcal{L}$ é $L$-Lipschitz contínuo:</p>
+
+<script type="math/tex; mode=display">\|\nabla \mathcal{L}(\theta) - \nabla \mathcal{L}(\phi)\| \leq L \|\theta - \phi\| \quad \forall \theta, \phi</script>
+
+<p>Isso garante que a função não “muda rápido demais”.</p>
+
+<h3 id="teorema-de-convergência">Teorema de Convergência</h3>
+
+<p><strong>Teorema:</strong> Se $\mathcal{L}$ é convexo com gradiente $L$-Lipschitz e $\theta^*$ é o mínimo global, então com $\eta = 1/L$:</p>
+
+<script type="math/tex; mode=display">\mathcal{L}(\theta_T) - \mathcal{L}(\theta^*) \leq \frac{L \|\theta_0 - \theta^*\|^2}{2T}</script>
+
+<p><strong>Prova (esboço):</strong></p>
+
+<p>Da condição de Lipschitz, temos o <em>descent lemma</em>:</p>
+
+<script type="math/tex; mode=display">\mathcal{L}(\theta_{t+1}) \leq \mathcal{L}(\theta_t) - \eta\left(1 - \frac{\eta L}{2}\right)\|\nabla \mathcal{L}(\theta_t)\|^2</script>
+
+<p>Com $\eta = 1/L$:</p>
+
+<script type="math/tex; mode=display">\mathcal{L}(\theta_{t+1}) \leq \mathcal{L}(\theta_t) - \frac{1}{2L}\|\nabla \mathcal{L}(\theta_t)\|^2</script>
+
+<p>Combinando com a convexidade ($\mathcal{L}(\theta^<em>) \geq \mathcal{L}(\theta_t) + \nabla \mathcal{L}(\theta_t)^\top(\theta^</em> - \theta_t)$), obtemos a taxa $O(1/T)$. $\square$</p>
+
+<h2 id="escolha-da-taxa-de-aprendizado">Escolha da Taxa de Aprendizado</h2>
+
+<p>A escolha de $\eta$ é crítica:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Situação</th>
+      <th>Efeito</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$\eta$ muito grande</td>
+      <td>Divergência / oscilação</td>
+    </tr>
+    <tr>
+      <td>$\eta$ muito pequeno</td>
+      <td>Convergência lenta</td>
+    </tr>
+    <tr>
+      <td>$\eta = 1/L$</td>
+      <td>Convergência garantida</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="variantes-importantes">Variantes Importantes</h2>
+
+<h3 id="mini-batch-sgd">Mini-Batch SGD</h3>
+
+<p>Em vez de usar todos os dados, usamos um mini-batch $\mathcal{B} \subset [n]$:</p>
+
+<script type="math/tex; mode=display">\theta_{t+1} = \theta_t - \eta \cdot \frac{1}{|\mathcal{B}|} \sum_{i \in \mathcal{B}} \nabla \ell_i(\theta_t)</script>
+
+<p>O gradiente estocástico é um estimador não-viesado: $\mathbb{E}[\nabla \ell_{\mathcal{B}}] = \nabla \mathcal{L}$.</p>
+
+<h3 id="momento-momentum">Momento (Momentum)</h3>
+
+<p>Acumula gradientes passados para suavizar a trajetória:</p>
+
+<p><script type="math/tex">v_{t+1} = \beta v_t + \nabla \mathcal{L}(\theta_t)</script>
+<script type="math/tex">\theta_{t+1} = \theta_t - \eta v_{t+1}</script></p>
+
+<h2 id="conclusão">Conclusão</h2>
+
+<p>O gradiente descendente é elegante em sua simplicidade: apenas siga a derivada.
+Nos próximos posts, veremos métodos de segunda ordem (Newton, BFGS) que usam a Hessiana
+$\nabla^2 \mathcal{L}$ para convergência mais rápida, porém com maior custo computacional.</p>
+
+<p><strong>Próximo post:</strong> <a href="#">Método de Newton e Quasi-Newton</a></p>
+
+    </div>
+
+    <footer class="post-footer">
+      <div class="post-share">
+        <span>Compartilhar:</span>
+        <a href="https://twitter.com/intent/tweet?text=Gradiente+Descendente%3A+Teoria+e+Intui%C3%A7%C3%A3o+Matem%C3%A1tica&url=http%3A%2F%2Flocalhost%3A4000%2Fotimizacao%2F2024%2F01%2F15%2Fgradiente-descendente%2F" target="_blank" rel="noopener">Twitter</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A4000%2Fotimizacao%2F2024%2F01%2F15%2Fgradiente-descendente%2F" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+
+      <nav class="post-nav">
+        
+        
+        <a href="/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/" class="post-nav-item post-nav-next">
+          <span class="nav-label">Próximo →</span>
+          <span class="nav-title">Decomposição em Valores Singulares (SVD): A Fatoração Universal</span>
+        </a>
+        
+      </nav>
+    </footer>
+
+  </article>
+
+  <!-- Sidebar / ToC -->
+  <aside class="post-sidebar">
+    <div class="toc-container sticky">
+      <h4 class="toc-title">Índice</h4>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+
+</div>
+
+<script src="/assets/js/toc.js"></script>
+
+  </main>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-symbol">∇</span>
+      <p class="footer-desc">Oi pessoal, me chamo Gabriele Duarte, e criei esse blog para compartilhar aprendizados em teoria de Machine Learning, matemática aplicada e outras áreas da computação.</p>
+    </div>
+
+    <div class="footer-links">
+      <h4>Links</h4>
+      <a href="/blog/">Blog</a>
+      <a href="/about/">Sobre</a>
+      <a href="/feed.xml">RSS Feed</a>
+    </div>
+
+    <div class="footer-social">
+      <h4>Redes</h4>
+      
+      <a href="https://github.com/gjduart" target="_blank" rel="noopener">GitHub</a>
+      
+      
+      <a href="https://www.linkedin.com/in/seu-perfil" target="_blank" rel="noopener">LinkedIn</a>
+      
+      
+      <a href="http://lattes.cnpq.br/seu-id" target="_blank" rel="noopener">Lattes</a>
+      
+      
+      <a href="https://scholar.google.com/citations?user=seu-id" target="_blank" rel="noopener">Google Scholar</a>
+      
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Notas de Computação · 2026 · Feito com Jekyll e ☕</p>
+  </div>
+</footer>
+
+
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

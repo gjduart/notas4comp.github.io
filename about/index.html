@@ -1,0 +1,87 @@
+---
+layout: default
+title: Sobre
+permalink: /about/
+---
+
+<div class="about-page">
+
+  <div class="about-header">
+    <div class="about-avatar-placeholder"><img class="about-avatar"
+        src="{{'about/assets/images/avatar.jpg' | relative_url }}"></div>
+    <div>
+      <h1 class="about-name">{{ site.author.name }}</h1>
+      <p class="about-role">{{ site.author.bio }}</p>
+      <div class="about-links">
+        {% if site.author.links.linkedin %}
+        <a class="about-link" href="{{ site.author.links.linkedin }}" target="_blank" rel="noopener">
+          <span class="link-icon">💼</span> LinkedIn
+        </a>
+        {% endif %}
+        {% if site.author.links.github %}
+        <a class="about-link" href="{{ site.author.links.github }}" target="_blank" rel="noopener">
+          <span class="link-icon">🐙</span> GitHub
+        </a>
+        {% endif %}
+        {% if site.author.links.lattes %}
+        <a class="about-link" href="{{ site.author.links.lattes }}" target="_blank" rel="noopener">
+          <span class="link-icon">📄</span> Lattes
+        </a>
+        {% endif %}
+        {% if site.author.links.scholar %}
+        <a class="about-link" href="{{ site.author.links.scholar }}" target="_blank" rel="noopener">
+          <span class="link-icon">🎓</span> Google Scholar
+        </a>
+        {% endif %}
+        {% if site.author.email %}
+        <a class="about-link" href="mailto:{{ site.author.email }}">
+          <span class="link-icon">✉️</span> E-mail
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="about-content">
+    <h2>Sobre mim</h2>
+    <p>
+      Olá! Sou aspirante a pesquisador e eterno estudante com interesses em Machine Learning e Matemática Aplicada.
+      Este blog nasceu da necessidade de organizar e consolidar meu aprendizado —
+      escrever sobre um tema é uma das melhores maneiras de realmente entendê-lo.
+    </p>
+
+    <p>
+      Aqui você encontrará notas detalhadas sobre teoria base de Aprendizado de Máquina (ML), derivações matemáticas,
+      intuições sobre algoritmos e muito mais. O foco é sempre na fundamentação teórica
+      sólida, com matemática rigorosa mas acessível.
+    </p>
+
+    <h2>Áreas de Interesse</h2>
+    <div class="interests-grid">
+      <div class="interest-item">🤖 Aprendizado de Máquina</div>
+      <div class="interest-item">🧠 Deep Learning</div>
+      <div class="interest-item">📊 Estatística Bayesiana</div>
+      <div class="interest-item">∇ Otimização</div>
+      <div class="interest-item">𝐌 Álgebra Linear</div>
+      <div class="interest-item">∫ Cálculo Variacional</div>
+      <div class="interest-item">𝒫 Teoria da Probabilidade</div>
+      <div class="interest-item">🔍 Teoria da Informação</div>
+    </div>
+
+    <h2>Sobre o Blog</h2>
+    <p>
+      Os posts cobrem tópicos como: fundamentos de álgebra linear para Aprendizado de Máquina,
+      métodos de otimização (gradiente descendente, métodos de segunda ordem),
+      modelos probabilísticos, redes neurais e suas bases matemáticas,
+      e muito mais.
+    </p>
+
+    <h2>Contato</h2>
+    <p>
+      Sinta-se à vontade para entrar em contato pelo
+      <a href="{{ site.author.links.linkedin }}" target="_blank">LinkedIn</a>
+      ou por <a href="mailto:{{ site.author.email }}">e-mail</a>.
+    </p>
+
+  </div>
+</div>

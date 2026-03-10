@@ -1,0 +1,105 @@
+---
+layout: default
+---
+
+<div class="home-hero">
+  <div class="hero-content">
+    <div class="hero-label">// blog pessoal</div>
+    <h1 class="hero-title">{{ site.title }}</h1>
+    <p class="hero-tagline">{{ site.tagline }}</p>
+    <div class="hero-tags">
+      <span class="tag">Machine Learning</span>
+      <span class="tag">Matemática</span>
+      <span class="tag">Álgebra Linear</span>
+      <span class="tag">Probabilidade</span>
+      <span class="tag">Otimização</span>
+      <span class="tag">Deep Learning</span>
+    </div>
+  </div>
+  <div class="hero-decoration">
+    <canvas id="math-canvas"></canvas>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Posts recentes -->
+  <section class="posts-section">
+    <div class="section-header">
+      <h2 class="section-title">Posts Recentes</h2>
+      <a href="/blog/" class="section-link">Ver todos →</a>
+    </div>
+
+    {% if site.posts.size > 0 %}
+    <div class="posts-grid">
+      {% for post in site.posts limit:6 %}
+      <article class="post-card">
+        <div class="post-card-header">
+          <div class="post-meta-top">
+            {% if post.categories.size > 0 %}
+            <span class="post-category">{{ post.categories[0] | replace: '-', ' ' }}</span>
+            {% endif %}
+            <span class="post-date">{{ post.date | date: "%d %b %Y" }}</span>
+          </div>
+          <h3 class="post-card-title">
+            <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+          </h3>
+        </div>
+        <p class="post-card-excerpt">{{ post.excerpt | strip_html | truncate: 120 }}</p>
+        <div class="post-card-footer">
+          {% if post.tags.size > 0 %}
+          <div class="post-tags">
+            {% for tag in post.tags limit:3 %}
+            <span class="post-tag">#{{ tag }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <a href="{{ post.url | relative_url }}" class="read-more">Ler →</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <p style="color: var(--text-muted); font-family: var(--font-mono); font-size: 0.9rem;">
+      Nenhum post ainda. Crie arquivos em <code>_posts/</code> para começar.
+    </p>
+    {% endif %}
+
+  </section>
+
+  <!-- Tópicos -->
+  <section class="topics-section">
+    <div class="section-header">
+      <h2 class="section-title">Tópicos</h2>
+    </div>
+    <div class="topics-grid">
+      <a href="/blog/category/machine-learning/" class="topic-card">
+        <span class="topic-icon">🤖</span>
+        <span class="topic-name">Machine Learning</span>
+      </a>
+      <a href="/blog/category/matematica/" class="topic-card">
+        <span class="topic-icon">∫</span>
+        <span class="topic-name">Matemática</span>
+      </a>
+      <a href="/blog/category/algebra-linear/" class="topic-card">
+        <span class="topic-icon">𝐌</span>
+        <span class="topic-name">Álgebra Linear</span>
+      </a>
+      <a href="/blog/category/probabilidade/" class="topic-card">
+        <span class="topic-icon">𝒫</span>
+        <span class="topic-name">Probabilidade</span>
+      </a>
+      <a href="/blog/category/otimizacao/" class="topic-card">
+        <span class="topic-icon">∇</span>
+        <span class="topic-name">Otimização</span>
+      </a>
+      <a href="/blog/category/deep-learning/" class="topic-card">
+        <span class="topic-icon">🧠</span>
+        <span class="topic-name">Deep Learning</span>
+      </a>
+    </div>
+  </section>
+
+</div>
+
+<script src="{{ '/assets/js/canvas-math.js' | relative_url }}"></script>

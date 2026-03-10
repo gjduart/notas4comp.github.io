@@ -1,0 +1,34 @@
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-symbol">∇</span>
+      <p class="footer-desc">{{ site.description }}</p>
+    </div>
+
+    <div class="footer-links">
+      <h4>Links</h4>
+      <a href="{{ '/blog/' | relative_url }}">Blog</a>
+      <a href="{{ '/about/' | relative_url }}">Sobre</a>
+      <a href="{{ '/feed.xml' | relative_url }}">RSS Feed</a>
+    </div>
+
+    <div class="footer-social">
+      <h4>Redes</h4>
+      {% if site.author.links.github %}
+      <a href="{{ site.author.links.github }}" target="_blank" rel="noopener">GitHub</a>
+      {% endif %}
+      {% if site.author.links.linkedin %}
+      <a href="{{ site.author.links.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+      {% endif %}
+      {% if site.author.links.lattes %}
+      <a href="{{ site.author.links.lattes }}" target="_blank" rel="noopener">Lattes</a>
+      {% endif %}
+      {% if site.author.links.scholar %}
+      <a href="{{ site.author.links.scholar }}" target="_blank" rel="noopener">Google Scholar</a>
+      {% endif %}
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>{{ site.title }} · {{ 'now' | date: "%Y" }} · Feito com Jekyll e ☕</p>
+  </div>
+</footer>

@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decomposição em Valores Singulares (SVD): A Fatoração Universal · Notas de Computação</title>
+  <meta name="description" content="SVD é a fatoração mais importante da álgebra linear. Entenda a teoria e suas aplicações em ML.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- MathJax para fórmulas matemáticas -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        packages: {'[+]': ['ams', 'boldsymbol']},
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Decomposição em Valores Singulares (SVD): A Fatoração Universal | Notas de Computação</title>
+<meta name="generator" content="Jekyll v3.8.7" />
+<meta property="og:title" content="Decomposição em Valores Singulares (SVD): A Fatoração Universal" />
+<meta name="author" content="Gabriel Duarte" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="SVD é a fatoração mais importante da álgebra linear. Entenda a teoria e suas aplicações em ML." />
+<meta property="og:description" content="SVD é a fatoração mais importante da álgebra linear. Entenda a teoria e suas aplicações em ML." />
+<link rel="canonical" href="http://localhost:4000/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/" />
+<meta property="og:url" content="http://localhost:4000/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/" />
+<meta property="og:site_name" content="Notas de Computação" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-01T10:00:00-03:00" />
+<script type="application/ld+json">
+{"description":"SVD é a fatoração mais importante da álgebra linear. Entenda a teoria e suas aplicações em ML.","author":{"@type":"Person","name":"Gabriel Duarte"},"@type":"BlogPosting","url":"http://localhost:4000/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/","headline":"Decomposição em Valores Singulares (SVD): A Fatoração Universal","dateModified":"2024-02-01T10:00:00-03:00","datePublished":"2024-02-01T10:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Notas de Computação" />
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      <span class="logo-symbol">∇</span>
+      <span class="logo-text">Notas de Computação</span>
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      <a href="/" class="nav-link ">
+        Início
+      </a>
+      <a href="/blog/" class="nav-link ">
+        Blog
+      </a>
+      <a href="/about/" class="nav-link ">
+        Sobre
+      </a>
+    </nav>
+
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+
+  <main class="site-main">
+    <div class="container post-container">
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <header class="post-header">
+      <div class="post-breadcrumb">
+        <a href="/">Início</a>
+        <span>/</span>
+        <a href="/blog/">Blog</a>
+        
+        <span>/</span>
+        <a href="/blog/category/algebra-linear/">Algebra linear</a>
+        
+      </div>
+
+      <h1 class="post-title" itemprop="headline">Decomposição em Valores Singulares (SVD): A Fatoração Universal</h1>
+
+      <div class="post-meta">
+        <time class="post-date" datetime="2024-02-01T10:00:00-03:00" itemprop="datePublished">
+          01 de February de 2024
+        </time>
+        
+        <span class="post-author">por Gabriel Duarte</span>
+        
+        
+        <span class="post-reading">· 10 min de leitura</span>
+        
+      </div>
+
+      
+      <div class="post-tags-header">
+        
+        <span class="post-tag">#svd</span>
+        
+        <span class="post-tag">#álgebra-linear</span>
+        
+        <span class="post-tag">#pca</span>
+        
+        <span class="post-tag">#decomposição</span>
+        
+      </div>
+      
+
+      
+      <p class="post-description">SVD é a fatoração mais importante da álgebra linear. Entenda a teoria e suas aplicações em ML.</p>
+      
+    </header>
+
+    <div class="post-content" itemprop="articleBody">
+      <p>A <strong>Decomposição em Valores Singulares</strong> (SVD) é talvez a fatoração matricial mais poderosa
+e ubíqua em toda a matemática aplicada e Machine Learning.</p>
+
+<h2 id="definição">Definição</h2>
+
+<p>Toda matriz $A \in \mathbb{R}^{m \times n}$ pode ser escrita como:</p>
+
+<script type="math/tex; mode=display">A = U \Sigma V^\top</script>
+
+<p>onde:</p>
+<ul>
+  <li>$U \in \mathbb{R}^{m \times m}$ — matriz ortogonal (vetores singulares esquerdos)</li>
+  <li>$\Sigma \in \mathbb{R}^{m \times n}$ — matriz diagonal com $\sigma_1 \geq \sigma_2 \geq \cdots \geq \sigma_r \geq 0$</li>
+  <li>$V \in \mathbb{R}^{n \times n}$ — matriz ortogonal (vetores singulares direitos)</li>
+</ul>
+
+<p>Os $\sigma_i$ são chamados de <strong>valores singulares</strong> de $A$.</p>
+
+<h2 id="intuição-geométrica">Intuição Geométrica</h2>
+
+<p>A SVD decompõe qualquer transformação linear em três operações simples:</p>
+
+<ol>
+  <li><strong>$V^\top$</strong>: rotação/reflexão no espaço de entrada</li>
+  <li><strong>$\Sigma$</strong>: escalonamento ao longo de eixos coordenados</li>
+  <li><strong>$U$</strong>: rotação/reflexão no espaço de saída</li>
+</ol>
+
+<p>Geometricamente, $A$ transforma a <strong>hiperesfera unitária</strong> em um <strong>hiperelipsoide</strong>,
+cujos semi-eixos têm comprimentos $\sigma_1, \sigma_2, \ldots, \sigma_r$.</p>
+
+<h2 id="existência-e-unicidade">Existência e Unicidade</h2>
+
+<p><strong>Teorema:</strong> Toda matriz real $A \in \mathbb{R}^{m \times n}$ possui uma SVD.</p>
+
+<p><strong>Prova:</strong> Considere $A^\top A \in \mathbb{R}^{n \times n}$, que é simétrica positiva semidefinida.
+Pelo teorema espectral, existe uma diagonalização ortogonal:</p>
+
+<script type="math/tex; mode=display">A^\top A = V \Lambda V^\top</script>
+
+<p>onde $\Lambda = \text{diag}(\lambda_1, \ldots, \lambda_n)$ com $\lambda_i \geq 0$.</p>
+
+<p>Defina $\sigma_i = \sqrt{\lambda_i}$ e $\Sigma$ como a matriz de valores singulares.
+Para $\sigma_i &gt; 0$, defina $u_i = \frac{1}{\sigma_i} A v_i$.</p>
+
+<p>Pode-se verificar que ${u_i}$ são ortonormais e que $A = U\Sigma V^\top$. $\square$</p>
+
+<h2 id="melhor-aproximação-de-posto-k">Melhor Aproximação de Posto $k$</h2>
+
+<p>Um dos resultados mais importantes é o <strong>Teorema de Eckart-Young</strong>:</p>
+
+<script type="math/tex; mode=display">\min_{\text{rank}(B) \leq k} \|A - B\|_F = \|A - A_k\|_F = \sqrt{\sum_{i=k+1}^{r} \sigma_i^2}</script>
+
+<p>onde $A_k = \sum_{i=1}^{k} \sigma_i u_i v_i^\top$ é a <strong>truncated SVD</strong>.</p>
+
+<p>Isso significa que $A_k$ é a <strong>melhor aproximação de posto $k$</strong> de $A$ na norma de Frobenius!</p>
+
+<h2 id="relação-com-pca">Relação com PCA</h2>
+
+<p>O PCA (Análise de Componentes Principais) é essencialmente uma SVD.</p>
+
+<p>Dada uma matriz de dados centrada $X \in \mathbb{R}^{n \times d}$:</p>
+
+<script type="math/tex; mode=display">X = U\Sigma V^\top</script>
+
+<p>As <strong>componentes principais</strong> são as colunas de $V$ (autovetores de $X^\top X$).
+A variância explicada pela $k$-ésima componente é $\sigma_k^2 / \sum_i \sigma_i^2$.</p>
+
+<h2 id="aplicações-em-ml">Aplicações em ML</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Aplicação</th>
+      <th>Como usa SVD</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PCA</td>
+      <td>Truncated SVD da matriz de dados</td>
+    </tr>
+    <tr>
+      <td>Sistemas de recomendação</td>
+      <td>Fatoração matricial baixo posto</td>
+    </tr>
+    <tr>
+      <td>Compressão de imagens</td>
+      <td>Aproximação de posto $k$</td>
+    </tr>
+    <tr>
+      <td>Solução de sistemas</td>
+      <td>Pseudo-inversa via SVD</td>
+    </tr>
+    <tr>
+      <td>Análise semântica</td>
+      <td>LSA (Latent Semantic Analysis)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="pseudo-inversa-de-moore-penrose">Pseudo-Inversa de Moore-Penrose</h2>
+
+<p>Para $A = U\Sigma V^\top$, a pseudo-inversa é:</p>
+
+<script type="math/tex; mode=display">A^+ = V \Sigma^+ U^\top</script>
+
+<p>onde $\Sigma^+$ é a transposta de $\Sigma$ com cada $\sigma_i &gt; 0$ substituído por $1/\sigma_i$.</p>
+
+<p>A solução de mínimos quadrados $\min_x |Ax - b|_2$ é dada por $x^* = A^+ b$.</p>
+
+<h2 id="implementação">Implementação</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="c1"># SVD completa
+</span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="n">U</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">Vt</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="n">svd</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c1"># Reconstrução
+</span><span class="n">Sigma</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">Sigma</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">diag</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="n">A_reconstructed</span> <span class="o">=</span> <span class="n">U</span> <span class="o">@</span> <span class="n">Sigma</span> <span class="o">@</span> <span class="n">Vt</span>
+
+<span class="c1"># Aproximação de posto k=2
+</span><span class="n">k</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">A_k</span> <span class="o">=</span> <span class="p">(</span><span class="n">U</span><span class="p">[:,</span> <span class="p">:</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">s</span><span class="p">[:</span><span class="n">k</span><span class="p">])</span> <span class="o">@</span> <span class="n">Vt</span><span class="p">[:</span><span class="n">k</span><span class="p">,</span> <span class="p">:]</span>
+<span class="k">print</span><span class="p">(</span><span class="sa">f</span><span class="s">"Erro de aproximação: </span><span class="si">{</span><span class="n">np</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="n">norm</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">A_k</span><span class="p">,</span> <span class="s">'fro'</span><span class="p">)</span><span class="si">:</span><span class="p">.</span><span class="mi">4</span><span class="n">f</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="conclusão">Conclusão</h2>
+
+<p>A SVD é verdadeiramente universal: ela existe para qualquer matriz, revela a geometria
+da transformação linear, e fornece a melhor aproximação de posto baixo.
+Compreender a SVD profundamente é essencial para entender PCA, redes neurais de baixo posto,
+e muito mais.</p>
+
+    </div>
+
+    <footer class="post-footer">
+      <div class="post-share">
+        <span>Compartilhar:</span>
+        <a href="https://twitter.com/intent/tweet?text=Decomposi%C3%A7%C3%A3o+em+Valores+Singulares+%28SVD%29%3A+A+Fatora%C3%A7%C3%A3o+Universal&url=http%3A%2F%2Flocalhost%3A4000%2Falgebra-linear%2F2024%2F02%2F01%2Fsvd-decomposicao-valores-singulares%2F" target="_blank" rel="noopener">Twitter</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A4000%2Falgebra-linear%2F2024%2F02%2F01%2Fsvd-decomposicao-valores-singulares%2F" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+
+      <nav class="post-nav">
+        
+        <a href="/otimizacao/2024/01/15/gradiente-descendente/" class="post-nav-item post-nav-prev">
+          <span class="nav-label">← Anterior</span>
+          <span class="nav-title">Gradiente Descendente: Teoria e Intuição Matemática</span>
+        </a>
+        
+        
+        <a href="/probabilidade/2024/02/20/inferencia-bayesiana/" class="post-nav-item post-nav-next">
+          <span class="nav-label">Próximo →</span>
+          <span class="nav-title">Inferência Bayesiana: Do Teorema de Bayes ao Posterior</span>
+        </a>
+        
+      </nav>
+    </footer>
+
+  </article>
+
+  <!-- Sidebar / ToC -->
+  <aside class="post-sidebar">
+    <div class="toc-container sticky">
+      <h4 class="toc-title">Índice</h4>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+
+</div>
+
+<script src="/assets/js/toc.js"></script>
+
+  </main>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-symbol">∇</span>
+      <p class="footer-desc">Oi pessoal, me chamo Gabriele Duarte, e criei esse blog para compartilhar aprendizados em teoria de Machine Learning, matemática aplicada e outras áreas da computação.</p>
+    </div>
+
+    <div class="footer-links">
+      <h4>Links</h4>
+      <a href="/blog/">Blog</a>
+      <a href="/about/">Sobre</a>
+      <a href="/feed.xml">RSS Feed</a>
+    </div>
+
+    <div class="footer-social">
+      <h4>Redes</h4>
+      
+      <a href="https://github.com/gjduart" target="_blank" rel="noopener">GitHub</a>
+      
+      
+      <a href="https://www.linkedin.com/in/seu-perfil" target="_blank" rel="noopener">LinkedIn</a>
+      
+      
+      <a href="http://lattes.cnpq.br/seu-id" target="_blank" rel="noopener">Lattes</a>
+      
+      
+      <a href="https://scholar.google.com/citations?user=seu-id" target="_blank" rel="noopener">Google Scholar</a>
+      
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Notas de Computação · 2026 · Feito com Jekyll e ☕</p>
+  </div>
+</footer>
+
+
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

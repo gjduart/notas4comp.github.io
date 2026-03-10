@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inferência Bayesiana: Do Teorema de Bayes ao Posterior · Notas de Computação</title>
+  <meta name="description" content="Como o teorema de Bayes fundamenta uma filosofia completa de aprendizado e inferência estatística.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+  <!-- MathJax para fórmulas matemáticas -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        packages: {'[+]': ['ams', 'boldsymbol']},
+        tags: 'ams'
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="/assets/css/main.css">
+
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Inferência Bayesiana: Do Teorema de Bayes ao Posterior | Notas de Computação</title>
+<meta name="generator" content="Jekyll v3.8.7" />
+<meta property="og:title" content="Inferência Bayesiana: Do Teorema de Bayes ao Posterior" />
+<meta name="author" content="Gabriel Duarte" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Como o teorema de Bayes fundamenta uma filosofia completa de aprendizado e inferência estatística." />
+<meta property="og:description" content="Como o teorema de Bayes fundamenta uma filosofia completa de aprendizado e inferência estatística." />
+<link rel="canonical" href="http://localhost:4000/probabilidade/2024/02/20/inferencia-bayesiana/" />
+<meta property="og:url" content="http://localhost:4000/probabilidade/2024/02/20/inferencia-bayesiana/" />
+<meta property="og:site_name" content="Notas de Computação" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-20T10:00:00-03:00" />
+<script type="application/ld+json">
+{"description":"Como o teorema de Bayes fundamenta uma filosofia completa de aprendizado e inferência estatística.","author":{"@type":"Person","name":"Gabriel Duarte"},"@type":"BlogPosting","url":"http://localhost:4000/probabilidade/2024/02/20/inferencia-bayesiana/","headline":"Inferência Bayesiana: Do Teorema de Bayes ao Posterior","dateModified":"2024-02-20T10:00:00-03:00","datePublished":"2024-02-20T10:00:00-03:00","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/probabilidade/2024/02/20/inferencia-bayesiana/"},"@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="Notas de Computação" />
+</head>
+<body>
+  <header class="site-header">
+  <div class="header-inner">
+    <a class="site-logo" href="/">
+      <span class="logo-symbol">∇</span>
+      <span class="logo-text">Notas de Computação</span>
+    </a>
+
+    <nav class="site-nav" id="site-nav">
+      <a href="/" class="nav-link ">
+        Início
+      </a>
+      <a href="/blog/" class="nav-link ">
+        Blog
+      </a>
+      <a href="/about/" class="nav-link ">
+        Sobre
+      </a>
+    </nav>
+
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+
+  <main class="site-main">
+    <div class="container post-container">
+
+  <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <header class="post-header">
+      <div class="post-breadcrumb">
+        <a href="/">Início</a>
+        <span>/</span>
+        <a href="/blog/">Blog</a>
+        
+        <span>/</span>
+        <a href="/blog/category/probabilidade/">Probabilidade</a>
+        
+      </div>
+
+      <h1 class="post-title" itemprop="headline">Inferência Bayesiana: Do Teorema de Bayes ao Posterior</h1>
+
+      <div class="post-meta">
+        <time class="post-date" datetime="2024-02-20T10:00:00-03:00" itemprop="datePublished">
+          20 de February de 2024
+        </time>
+        
+        <span class="post-author">por Gabriel Duarte</span>
+        
+        
+        <span class="post-reading">· 8 min de leitura</span>
+        
+      </div>
+
+      
+      <div class="post-tags-header">
+        
+        <span class="post-tag">#bayes</span>
+        
+        <span class="post-tag">#probabilidade</span>
+        
+        <span class="post-tag">#inferência</span>
+        
+        <span class="post-tag">#prior</span>
+        
+        <span class="post-tag">#posterior</span>
+        
+      </div>
+      
+
+      
+      <p class="post-description">Como o teorema de Bayes fundamenta uma filosofia completa de aprendizado e inferência estatística.</p>
+      
+    </header>
+
+    <div class="post-content" itemprop="articleBody">
+      <p>A <strong>inferência bayesiana</strong> é uma abordagem à estatística que trata probabilidade como
+<strong>grau de crença</strong>, atualizando crenças à medida que novos dados chegam.</p>
+
+<h2 id="o-teorema-de-bayes">O Teorema de Bayes</h2>
+
+<p>O resultado central é simples e elegante:</p>
+
+<script type="math/tex; mode=display">P(\theta \mid \mathcal{D}) = \frac{P(\mathcal{D} \mid \theta) \, P(\theta)}{P(\mathcal{D})}</script>
+
+<p>onde:</p>
+<ul>
+  <li>$P(\theta)$ — <strong>prior</strong>: crença sobre $\theta$ antes dos dados</li>
+  <li>$P(\mathcal{D} \mid \theta)$ — <strong>verossimilhança</strong>: probabilidade dos dados dado $\theta$</li>
+  <li>$P(\mathcal{D})$ — <strong>evidência</strong>: constante normalizadora</li>
+  <li>$P(\theta \mid \mathcal{D})$ — <strong>posterior</strong>: crença atualizada após os dados</li>
+</ul>
+
+<p>A intuição: começamos com uma crença ($prior$), observamos dados, e atualizamos nossa crença ($posterior$).</p>
+
+<h2 id="exemplo-estimativa-de-proporção">Exemplo: Estimativa de Proporção</h2>
+
+<p>Queremos estimar a probabilidade $\theta$ de cara em uma moeda.</p>
+
+<p><strong>Prior:</strong> Assumimos $\theta \sim \text{Beta}(\alpha, \beta)$ (prior conjugado).</p>
+
+<script type="math/tex; mode=display">P(\theta) = \frac{\theta^{\alpha-1}(1-\theta)^{\beta-1}}{B(\alpha,\beta)}</script>
+
+<p><strong>Verossimilhança:</strong> Observamos $H$ caras e $T$ coroas:</p>
+
+<script type="math/tex; mode=display">P(\mathcal{D} \mid \theta) = \theta^H (1-\theta)^T</script>
+
+<p><strong>Posterior:</strong> O prior Beta é conjugado à verossimilhança Binomial:</p>
+
+<script type="math/tex; mode=display">P(\theta \mid \mathcal{D}) \propto \theta^{H+\alpha-1}(1-\theta)^{T+\beta-1}</script>
+
+<p>Portanto: $\theta \mid \mathcal{D} \sim \text{Beta}(\alpha + H, \beta + T)$</p>
+
+<p>A média posterior é:</p>
+
+<script type="math/tex; mode=display">\mathbb{E}[\theta \mid \mathcal{D}] = \frac{\alpha + H}{\alpha + \beta + H + T}</script>
+
+<h2 id="maximum-a-posteriori-map">Maximum A Posteriori (MAP)</h2>
+
+<p>Em vez da distribuição completa, podemos buscar a moda do posterior:</p>
+
+<script type="math/tex; mode=display">\theta^{MAP} = \arg\max_\theta \log P(\theta \mid \mathcal{D}) = \arg\max_\theta \left[\log P(\mathcal{D} \mid \theta) + \log P(\theta)\right]</script>
+
+<p><strong>Insight:</strong> MAP é equivalente a máxima verossimilhança com <strong>regularização</strong>!
+O $\log P(\theta)$ age como termo regularizador:</p>
+<ul>
+  <li>Prior Gaussiano $\Rightarrow$ regularização $L_2$ (Ridge)</li>
+  <li>Prior Laplaciano $\Rightarrow$ regularização $L_1$ (Lasso)</li>
+</ul>
+
+<h2 id="posterior-preditivo">Posterior Preditivo</h2>
+
+<p>Para fazer previsões, marginalizamos sobre o posterior:</p>
+
+<script type="math/tex; mode=display">P(x_{new} \mid \mathcal{D}) = \int P(x_{new} \mid \theta) P(\theta \mid \mathcal{D}) \, d\theta</script>
+
+<p>Isso <strong>incorpora incerteza sobre os parâmetros</strong> na previsão — uma vantagem fundamental sobre métodos pontuais.</p>
+
+<h2 id="comparação-bayesiano-vs-frequentista">Comparação: Bayesiano vs. Frequentista</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Aspecto</th>
+      <th>Bayesiano</th>
+      <th>Frequentista</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Probabilidade</td>
+      <td>Grau de crença</td>
+      <td>Frequência limite</td>
+    </tr>
+    <tr>
+      <td>Parâmetros</td>
+      <td>Variáveis aleatórias</td>
+      <td>Quantidades fixas</td>
+    </tr>
+    <tr>
+      <td>Inferência</td>
+      <td>Distribuição posterior</td>
+      <td>Estimativas pontuais</td>
+    </tr>
+    <tr>
+      <td>Incerteza</td>
+      <td>Via posterior</td>
+      <td>Via intervalos de confiança</td>
+    </tr>
+    <tr>
+      <td>Dados necessários</td>
+      <td>Funciona com poucos</td>
+      <td>Precisa de muitos</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="implementação-com-pymc">Implementação com PyMC</h2>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">pymc</span> <span class="k">as</span> <span class="n">pm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="c1"># Dados: 7 caras em 10 lançamentos
+</span><span class="n">H</span><span class="p">,</span> <span class="n">N</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">10</span>
+
+<span class="k">with</span> <span class="n">pm</span><span class="p">.</span><span class="n">Model</span><span class="p">()</span> <span class="k">as</span> <span class="n">modelo</span><span class="p">:</span>
+    <span class="c1"># Prior
+</span>    <span class="n">theta</span> <span class="o">=</span> <span class="n">pm</span><span class="p">.</span><span class="n">Beta</span><span class="p">(</span><span class="s">'theta'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Verossimilhança
+</span>    <span class="n">obs</span> <span class="o">=</span> <span class="n">pm</span><span class="p">.</span><span class="n">Binomial</span><span class="p">(</span><span class="s">'obs'</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span> <span class="n">observed</span><span class="o">=</span><span class="n">H</span><span class="p">)</span>
+
+    <span class="c1"># Amostragem MCMC
+</span>    <span class="n">trace</span> <span class="o">=</span> <span class="n">pm</span><span class="p">.</span><span class="n">sample</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="n">return_inferencedata</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">pm</span><span class="p">.</span><span class="n">plot_posterior</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span> <span class="n">var_names</span><span class="o">=</span><span class="p">[</span><span class="s">'theta'</span><span class="p">])</span>
+</code></pre></div></div>
+
+<h2 id="conclusão">Conclusão</h2>
+
+<p>A inferência bayesiana oferece uma estrutura coerente para aprendizado:
+começamos com conhecimento prévio, observamos dados, e atualizamos sistematicamente.
+A chave está em escolher priors que reflitam conhecimento genuíno — nem muito informativos,
+nem completamente vagos.</p>
+
+<p>No próximo post, veremos <strong>Processos Gaussianos</strong>: a extensão bayesiana para funções.</p>
+
+    </div>
+
+    <footer class="post-footer">
+      <div class="post-share">
+        <span>Compartilhar:</span>
+        <a href="https://twitter.com/intent/tweet?text=Infer%C3%AAncia+Bayesiana%3A+Do+Teorema+de+Bayes+ao+Posterior&url=http%3A%2F%2Flocalhost%3A4000%2Fprobabilidade%2F2024%2F02%2F20%2Finferencia-bayesiana%2F" target="_blank" rel="noopener">Twitter</a>
+        <a href="https://www.linkedin.com/sharing/share-offsite/?url=http%3A%2F%2Flocalhost%3A4000%2Fprobabilidade%2F2024%2F02%2F20%2Finferencia-bayesiana%2F" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+
+      <nav class="post-nav">
+        
+        <a href="/algebra-linear/2024/02/01/svd-decomposicao-valores-singulares/" class="post-nav-item post-nav-prev">
+          <span class="nav-label">← Anterior</span>
+          <span class="nav-title">Decomposição em Valores Singulares (SVD): A Fatoração Universal</span>
+        </a>
+        
+        
+      </nav>
+    </footer>
+
+  </article>
+
+  <!-- Sidebar / ToC -->
+  <aside class="post-sidebar">
+    <div class="toc-container sticky">
+      <h4 class="toc-title">Índice</h4>
+      <div id="toc" class="toc"></div>
+    </div>
+  </aside>
+
+</div>
+
+<script src="/assets/js/toc.js"></script>
+
+  </main>
+
+  <footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <span class="logo-symbol">∇</span>
+      <p class="footer-desc">Oi pessoal, me chamo Gabriele Duarte, e criei esse blog para compartilhar aprendizados em teoria de Machine Learning, matemática aplicada e outras áreas da computação.</p>
+    </div>
+
+    <div class="footer-links">
+      <h4>Links</h4>
+      <a href="/blog/">Blog</a>
+      <a href="/about/">Sobre</a>
+      <a href="/feed.xml">RSS Feed</a>
+    </div>
+
+    <div class="footer-social">
+      <h4>Redes</h4>
+      
+      <a href="https://github.com/gjduart" target="_blank" rel="noopener">GitHub</a>
+      
+      
+      <a href="https://www.linkedin.com/in/seu-perfil" target="_blank" rel="noopener">LinkedIn</a>
+      
+      
+      <a href="http://lattes.cnpq.br/seu-id" target="_blank" rel="noopener">Lattes</a>
+      
+      
+      <a href="https://scholar.google.com/citations?user=seu-id" target="_blank" rel="noopener">Google Scholar</a>
+      
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>Notas de Computação · 2026 · Feito com Jekyll e ☕</p>
+  </div>
+</footer>
+
+
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

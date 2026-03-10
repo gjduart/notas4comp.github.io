@@ -1,0 +1,77 @@
+# Configurações gerais
+title: "Notas de Computação"
+tagline: "Notas sobre Machine Learning, Matemática e Ciência de Dados"
+description: >-
+  Oi pessoal, me chamo Gabriele Duarte, e criei esse blog para compartilhar aprendizados em teoria de Machine Learning,
+  matemática aplicada e outras áreas da computação.
+baseurl: ""
+url: "https://comp-notes-gjduart.github.io" # Altere para o seu domínio
+
+# Informações do autor
+author:
+  name: "Gabriel Duate"
+  email: "g.jonas.duarte@gmail.com"
+  bio: "Doutorando na Universidade Estadual do Ceará, Mestre em computação e Professor"
+  avatar: "assets/images/avatar.jpg"
+  links:
+    linkedin: "https://www.linkedin.com/in/seu-perfil"
+    github: "https://github.com/gjduart"
+    lattes: "http://lattes.cnpq.br/seu-id"
+    scholar: "https://scholar.google.com/citations?user=seu-id"
+
+# Configuração de posts
+permalink: /:categories/:year/:month/:day/:title/
+
+# Markdown e highlight
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  math_engine: mathjax
+
+# Coleções
+collections:
+  notes:
+    output: true
+    permalink: /notes/:path/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      author: "Gabriel Duarte"
+      comments: false
+  - scope:
+      path: ""
+      type: "notes"
+    values:
+      layout: "note"
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Categorias principais
+categories_list:
+  - machine-learning
+  - matematica
+  - probabilidade
+  - algebra-linear
+  - calculo
+  - otimizacao
+  - deep-learning
+
+# Exclusões do build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - README.md
+  - "*.sh"
