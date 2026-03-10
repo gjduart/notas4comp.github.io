@@ -4,7 +4,7 @@ tagline: "Notas sobre Machine Learning, Matemática e Ciência de Dados"
 description: >-
   Oi pessoal, me chamo Gabriele Duarte, e criei esse blog para compartilhar aprendizados em teoria de Machine Learning,
   matemática aplicada e outras áreas da computação.
-baseurl: ""
+baseurl: "https://notas4comp.github.io"
 url: "notas4comp.github.io" # Altere para o seu domínio
 
 # Informações do autor
