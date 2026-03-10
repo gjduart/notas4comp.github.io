@@ -14,10 +14,10 @@ author:
   bio: "Doutorando na Universidade Estadual do Ceará, Mestre em computação e Professor"
   avatar: "assets/images/avatar.jpg"
   links:
-    linkedin: "https://www.linkedin.com/in/seu-perfil"
+    linkedin: "www.linkedin.com/in/gabriel-duart"
     github: "https://github.com/gjduart"
-    lattes: "http://lattes.cnpq.br/seu-id"
-    scholar: "https://scholar.google.com/citations?user=seu-id"
+    lattes: "https://lattes.cnpq.br/2471123945004372"
+    scholar: "https://scholar.google.com/citations?user=-2O7IgQAAAAJ&hl"
 
 # Configuração de posts
 permalink: /:categories/:year/:month/:day/:title/
